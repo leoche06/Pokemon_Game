@@ -1,0 +1,6 @@
+# python
+.venv
+
+# editor
+.vscode
+.idea
