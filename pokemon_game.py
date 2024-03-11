@@ -1,3 +1,5 @@
+import random
+
 from dataclasses import dataclass
 from enum import Enum
 
@@ -181,23 +183,41 @@ MOVES_DICTIONARY = {
 
 
 @dataclass
+class Move:
+    name: str
+    power: int
+    type_: Type
+    super_effective_against: list[Type]
+    not_very_effective_against: list[Type]
+
+
+@dataclass
 class Pokémon:
     name: str
-    type_: list[str]
+    type_: list[Type]
     hp: int
     attack: int
     defense: int
     speed: int
     experience: int
-    moves: list[str]
+    moves: list[Move]
     level: int
     default_hp: int
 
     def battle(self, sb: 'Pokémon'):
         cmp = self.speed - sb.speed
 
-    def calculate_damage(self, sb: 'Pokémon'):
-        pass
+    def calculate_damage(self, sb: 'Pokémon', move: Move):
+        damage = (2 * self.level / 5 + 2) * move.power * self.attack / sb.defense / 50
+        critical = 2 if random.randint(0, 511) < self.speed else 1
+        damage *= critical
+        rand_num = random.uniform(0.85, 1.0)
+        damage *= rand_num
+        if sb.type_ in move.super_effective_against:
+            damage *= 2
+        elif sb.type_ in move.not_very_effective_against:
+            damage /= 2
+        return damage
 
     def update_level(self):
         pass
