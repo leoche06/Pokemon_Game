@@ -37,7 +37,7 @@ CHARACTERS = {
 
 
 @dataclass
-class Pokemon:
+class Pokémon:
     name: str
     type_: list[str]
     hp: int
@@ -59,8 +59,8 @@ class Pokemon:
 
 
 @dataclass
-class Pokedex:
-    pokemons: list[Pokemon]
+class Pokédex:
+    pokemons: list[Pokémon]
 
     def add_pokemon(self):
         pass
