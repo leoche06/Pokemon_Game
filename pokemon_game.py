@@ -214,7 +214,7 @@ class Pokémon:
     @property
     def level(self):
         return int(self.experience ** (1 / 3)) + 1
-    
+
     def battle(self, sb: 'Pokémon'):
         cmp = self.speed - sb.speed
 
