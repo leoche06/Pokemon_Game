@@ -201,9 +201,12 @@ class Pokémon:
     speed: int
     experience: int
     moves: list[Move]
-    level: int
     default_hp: int
 
+    @property
+    def level(self):
+        return int(self.experienc ** (1 / 3)) + 1
+    
     def battle(self, sb: 'Pokémon'):
         cmp = self.speed - sb.speed
 
@@ -218,9 +221,7 @@ class Pokémon:
         elif sb.type_ in move.not_very_effective_against:
             damage /= 2
         return damage
-
-    def update_level(self):
-        pass
+    
 
     def reset_hp(self):
         self.hp = self.default_hp
