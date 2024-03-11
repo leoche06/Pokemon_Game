@@ -190,6 +190,14 @@ class Move:
     super_effective_against: list[Type]
     not_very_effective_against: list[Type]
 
+    @staticmethod
+    def from_dict(self, data: dict):
+        self.name = data['name']
+        self.power = data['power']
+        self.type_ = data['type']
+        self.super_effective_against = data['super effective against']
+        self.not_very_effective_against = data['not very effective against']
+
 
 @dataclass
 class Pokémon:
@@ -205,7 +213,7 @@ class Pokémon:
 
     @property
     def level(self):
-        return int(self.experienc ** (1 / 3)) + 1
+        return int(self.experience ** (1 / 3)) + 1
     
     def battle(self, sb: 'Pokémon'):
         cmp = self.speed - sb.speed
@@ -221,21 +229,28 @@ class Pokémon:
         elif sb.type_ in move.not_very_effective_against:
             damage /= 2
         return damage
-    
 
     def reset_hp(self):
         self.hp = self.default_hp
+
+    @staticmethod
+    def from_dict(self, data: dict):
+        self.name = data['name']
+        self.type_ = data['type']
+        self.hp = data['hp']
+        self.attack = data['attack']
+        self.defense = data['defense']
+        self.speed = data['speed']
+        self.experience = data['experience']
+        self.moves = [Move(name, MOVES_DICTIONARY[name]['power'], MOVES_DICTIONARY[name]['type'],
+                           MOVES_DICTIONARY[name]['super effective against'],
+                           MOVES_DICTIONARY[name]['not very effective against']) for name in data['moves']]
+        self.default_hp = data['hp']
 
 
 @dataclass
 class Pokédex:
     pokemons: list[Pokémon]
 
-    def add_pokemon(self):
-        pass
-
-    def remove_pokemon(self):
-        pass
-
-    def search_pokemon(self):
-        pass
+    def add_pokemon(self, pokemon: Pokémon):
+        self.pokemons.append(pokemon)
