@@ -276,10 +276,10 @@ class Pokémon:
         self.hp = self.default_hp
 
     @staticmethod
-    def from_dict(data: dict):
+    def from_dict(name: str, data: dict):
         """Transfer the data from the dictionary to the Pokémon class."""
         moves = [Move.from_dict(MOVES_DICTIONARY[move]) for move in data['Moves']]
-        return Pokémon(data['name'], data['Type'], data['HP'], data['Attack'], data['Defense'], data['Speed'],
+        return Pokémon(name, data['Type'], data['HP'], data['Attack'], data['Defense'], data['Speed'],
                        data['Experience'], moves, data['HP'])
 
 
@@ -334,17 +334,17 @@ def choose_pokémon() -> Pokémon:
         pokemon = input("Choose a Pokémon (1/2/3): ")
     match pokemon:
         case '1':
-            return Pokémon.from_dict(CHARACTERS['Bulbasaur'])
+            return Pokémon.from_dict("Bulbasaur", CHARACTERS['Bulbasaur'])
         case '2':
-            return Pokémon.from_dict(CHARACTERS['Charmander'])
+            return Pokémon.from_dict("Charmander", CHARACTERS['Charmander'])
         case '3':
-            return Pokémon.from_dict(CHARACTERS['Squirtle'])
+            return Pokémon.from_dict("Squirtle", CHARACTERS['Squirtle'])
 
 
 def computer_choose_pokémon() -> Pokémon:
     """The computer chooses a Pokémon."""
-    pokemons = random.choice(list(CHARACTERS.keys()))
-    return Pokémon.from_dict(CHARACTERS[pokemons])
+    pokemon = random.choice(list(CHARACTERS.keys()))
+    return Pokémon.from_dict(pokemon, CHARACTERS[pokemon])
 
 
 def main():
