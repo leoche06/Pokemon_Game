@@ -216,7 +216,38 @@ class Pokémon:
         return int(self.experience ** (1 / 3)) + 1
 
     def battle(self, sb: 'Pokémon'):
-        cmp = self.speed - sb.speed
+        while self.hp > 0 and sb.hp > 0:
+            print(f"{self.name}'s HP: {self.hp}")
+            print(f"{sb.name}'s HP: {sb.hp}")
+            print(f"{self.name}'s moves:")
+            for i, move in enumerate(self.moves):
+                print(f"{i + 1}. {move.name}")
+            move = int(input(f"Choose a move (1-{len(self.moves)}): "))
+            while move not in range(1, len(self.moves) + 1):
+                move = int(input(f"Invalid input! Choose a move (1-{len(self.moves)}): "))
+            move = self.moves[move - 1]
+            damage = self.calculate_damage(sb, move)
+            sb.hp -= damage
+            print(f"{self.name} used {move.name}!")
+            print(f"{sb.name} lost {damage} HP!")
+            if sb.hp <= 0:
+                print(f"{sb.name} fainted!")
+                break
+            print(f"{sb.name}'s moves:")
+            for i, move in enumerate(sb.moves):
+                print(f"{i + 1}. {move.name}")
+            move = int(input(f"Choose a move (1-{len(sb.moves)}): "))
+            while move not in range(1, len(sb.moves) + 1):
+                move = int(input(f"Invalid input! Choose a move (1-{len(sb.moves)}): "))
+            move = sb.moves[move - 1]
+            damage = sb.calculate_damage(self, move)
+            self.hp -= damage
+            print(f"{sb.name} used {move.name}!")
+            print(f"{self.name} lost {damage} HP!")
+            if self.hp <= 0:
+                print(f"{self.name} fainted!")
+                break
+        
 
     def calculate_damage(self, sb: 'Pokémon', move: Move):
         damage = (2 * self.level / 5 + 2) * move.power * self.attack / sb.defense / 50
@@ -254,3 +285,80 @@ class Pokédex:
 
     def add_pokemon(self, pokemon: Pokémon):
         self.pokemons.append(pokemon)
+
+
+def introduction():
+    import time
+    time.sleep(3)
+    new = input("Are you new to this game? (yes/no): ")
+    if new == 'yes':
+        #introduce user how this game works
+        print("This is a turn-based game. You will be given a Pokémon and you will have to battle other Pokémon.")
+        print("You can choose 1 Pokémon from 3 Pokémon to start with. Each Pokémon has different stats and moves.")
+        print("You can choose a move to attack the other Pokémon.")
+        print("Your Pokémon has several stats such as HP, Attack, Defense, and Speed.")
+        print("HP is the health points of your Pokémon. When it reaches 0, your Pokémon faints.")
+        print("Attack is the strength of your Pokémon's attack.")
+        print("Defense is the strength of your Pokémon's defense.")
+        print("Speed is the speed of your Pokémon. The Pokémon with the higher speed will attack first.")
+        #damage calculation
+        print("The damage of your Pokémon's move is calculated by the following formula:")
+        print("damage = (2 * level / 5 + 2) * move_power * attack / defense / 50 + 2")
+        print("The level of your Pokémon is calculated by the following formula:")
+        print("level = experience ** (1 / 3) + 1")
+        print("The damage can be critical. The chance of a critical hit is determined by the speed of your Pokémon.")
+        print("The damage can be random. The damage is multiplied by a random number between 0.85 and 1.0.")
+        print("The game ends when all your Pokémon are fainted.")
+        time.sleep(3)
+        new = input("Are you ready to start the game? (yes/no): ")
+        if new == 'no':
+            print("Goodbye!")
+            return
+
+def choose_Pokémon():
+    print("Choose a Pokémon to start with:")
+    print("1. Bulbusaur")
+    print("2. Charmander")
+    print("3. Squirtle")
+    pokemon = input("Choose a Pokémon (1/2/3): ")
+    while pokemon not in ['1', '2', '3']:
+        print("Invalid input! Please choose a Pokémon from 1 to 3.")
+        pokemon = input("Choose a Pokémon (1/2/3): ")
+    if pokemon == '1':
+        player = Pokédex.add_pokemon(Pokémon.from_dict(CHARACTERS['Bulbasaur']))
+    elif pokemon == '2':
+        player = Pokédex.add_pokemon(Pokémon.from_dict(CHARACTERS['Charmander']))
+    else:
+        player = Pokédex.add_pokemon(Pokémon.from_dict(CHARACTERS['Squirtle']))
+    print(f"You have chosen {player.name}!")
+    return player
+
+def computer_choose_Pokémon():
+    computer = Pokédex.add_pokemon(Pokémon.from_dict(CHARACTERS[random.choice(list(CHARACTERS.keys()))]))
+    print(f"The computer has chosen {computer.name}!")
+    return computer
+
+def main():
+    print("                                  ,'\ ")
+    print("    _.----.        ____         ,'  _\   ___    ___     ____")
+    print("_,-'       `.     |    |  /`.   \,-'    |   \  /   |   |    \  |`.")
+    print("\      __    \    '-.  | /   `.  ___    |    \/    |   '-.   \ |  |")
+    print(" \.    \ \   |  __  |  |/    ,','_  `.  |          | __  |    \|  |")
+    print("   \    \/   /,' _`.|      ,' / / / /   |          ,' _`.|     |  |")
+    print("    \     ,-'/  /   \    ,'   | \/ / ,`.|         /  /   \  |     |")
+    print("     \    \ |   \_/  |   `-.  \    `'  /|  |    ||   \_/  | |\    |")
+    print("      \    \ \      /       `-.`.___,-' |  |\  /| \      /  | |   |")
+    print("       \    \ `.__,'|  |`-._    `|      |__| \/ |  `.__,'|  | |   |")
+    print("        \_.-'       |__|    `-._ |              '-.|     '-.| |   |")
+    print("                                `'                            '-._|")
+    print('Welcome to the Pokémon game!')
+    introduction()
+    player = choose_Pokémon()
+    computer_choose_Pokémon()
+    
+    
+    
+        
+        
+        
+    
