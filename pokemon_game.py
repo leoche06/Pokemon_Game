@@ -191,7 +191,8 @@ class Move:
     not_very_effective_against: list[Type]
 
     @staticmethod
-    def from_dict(self, data: dict):
+    def from_dict(self, data: dict):  
+        """Transfer the data from the dictionary to the Move class."""   
         self.name = data['name']
         self.power = data['power']
         self.type_ = data['type']
@@ -213,9 +214,11 @@ class Pokémon:
 
     @property
     def level(self):
+        """Calculate the level of the Pokémon."""
         return int(self.experience ** (1 / 3)) + 1
 
     def battle(self, sb: 'Pokémon'):
+        """Pokémon battle."""
         while self.hp > 0 and sb.hp > 0:
             print(f"{self.name}'s HP: {self.hp}")
             print(f"{sb.name}'s HP: {sb.hp}")
@@ -233,23 +236,18 @@ class Pokémon:
             if sb.hp <= 0:
                 print(f"{sb.name} fainted!")
                 break
-            print(f"{sb.name}'s moves:")
-            for i, move in enumerate(sb.moves):
-                print(f"{i + 1}. {move.name}")
-            move = int(input(f"Choose a move (1-{len(sb.moves)}): "))
-            while move not in range(1, len(sb.moves) + 1):
-                move = int(input(f"Invalid input! Choose a move (1-{len(sb.moves)}): "))
-            move = sb.moves[move - 1]
+            move = sb.moves[random.randint(0, len(sb.moves) - 1)]
             damage = sb.calculate_damage(self, move)
             self.hp -= damage
             print(f"{sb.name} used {move.name}!")
             print(f"{self.name} lost {damage} HP!")
             if self.hp <= 0:
                 print(f"{self.name} fainted!")
-                break
+                return 
         
 
     def calculate_damage(self, sb: 'Pokémon', move: Move):
+        """Calculate the damage of the move."""
         damage = (2 * self.level / 5 + 2) * move.power * self.attack / sb.defense / 50
         critical = 2 if random.randint(0, 511) < self.speed else 1
         damage *= critical
@@ -262,10 +260,12 @@ class Pokémon:
         return damage
 
     def reset_hp(self):
+        """Reset the HP of the Pokémon."""
         self.hp = self.default_hp
 
     @staticmethod
     def from_dict(self, data: dict):
+        """Transfer the data from the dictionary to the Pokémon class."""
         self.name = data['name']
         self.type_ = data['type']
         self.hp = data['hp']
@@ -284,10 +284,16 @@ class Pokédex:
     pokemons: list[Pokémon]
 
     def add_pokemon(self, pokemon: Pokémon):
+        """Add a Pokémon to the Pokédex."""
         self.pokemons.append(pokemon)
+    
+    def remove_pokemon(self, pokemon: Pokémon):
+        """Remove a Pokémon from the Pokédex."""
+        self.pokemons.remove(pokemon)
 
 
 def introduction():
+    """Introduce the game to the user."""
     import time
     time.sleep(3)
     new = input("Are you new to this game? (yes/no): ")
@@ -316,6 +322,7 @@ def introduction():
             return
 
 def choose_Pokémon():
+    """Choose a Pokémon to start with."""
     print("Choose a Pokémon to start with:")
     print("1. Bulbusaur")
     print("2. Charmander")
@@ -334,11 +341,13 @@ def choose_Pokémon():
     return player
 
 def computer_choose_Pokémon():
+    """The computer chooses a Pokémon."""
     computer = Pokédex.add_pokemon(Pokémon.from_dict(CHARACTERS[random.choice(list(CHARACTERS.keys()))]))
     print(f"The computer has chosen {computer.name}!")
     return computer
 
 def main():
+    """The main function of the game."""
     print("                                  ,'\ ")
     print("    _.----.        ____         ,'  _\   ___    ___     ____")
     print("_,-'       `.     |    |  /`.   \,-'    |   \  /   |   |    \  |`.")
@@ -354,7 +363,15 @@ def main():
     print('Welcome to the Pokémon game!')
     introduction()
     player = choose_Pokémon()
-    computer_choose_Pokémon()
+    computer = computer_choose_Pokémon()
+    result = player.pokemon.battle(computer.pokemon)
+    while player.pokemon is not None:
+        player.pokemon.reset_hp()
+        computer.pokemon.reset_hp()
+        if computer.pokemon.hp <= 0:
+            computer.pokemon = computer_choose_Pokémon()
+        if player.pokemon.hp <= 0:
+            player.pokemon = choose_Pokémon()
     
     
     
