@@ -141,8 +141,11 @@ class Pokemon(ABC):
             console.print(f"{defend.name} lost {damage:.2f} HP!", style="bold yellow")
             if defend.hp <= 0:
                 console.print(f"{defend.name} fainted!", style="bold yellow")
-                atk.experience += defend.experience
-                return True
+                if atk.name == self.name:
+                    self.experience += defend.experience
+                    return True
+                else:
+                    return False
             move = defend.choose_move()
             damage = defend.calculate_damage(atk, move)
             atk.hp -= damage
@@ -150,7 +153,11 @@ class Pokemon(ABC):
             console.print(f"{atk.name} lost {damage:.2f} HP!", style="bold green")
             if atk.hp <= 0:
                 console.print(f"{atk.name} fainted!", style="bold red")
-                return False
+                if defend.name == self.name:
+                    self.experience += defend.experience
+                    return True
+                else:
+                    return False
 
     def calculate_damage(self, sb: "Pokemon", move: Move):
         """Calculate the damage of the move."""
