@@ -394,10 +394,14 @@ def main():
     result = player.pokemons[0].battle(computer.pokemons[0])
     player.pokemons[0].reset_hp()
     computer.pokemons[0].reset_hp()
-    player.add_pokemon(computer.pokemons[0])
     if not result and len(player.pokemons) == 1:
         print("You lost the game!")
         return
+    if result:
+        print("You won the game!")
+        if computer.pokemons not in player.pokemons:
+            player.add_pokemon(computer.pokemons[0])
+            print(f"You got {computer.pokemons[0].name}!")
     print("Do you want to keep playing?")
     keep_playing = input("yes/no: ")
     if keep_playing == 'no':
@@ -405,10 +409,16 @@ def main():
         return
     while True:
         player_pokemon = player.add_pokemon(choose_pokémon(player.pokemons))
-        result = player.pokemons[player_pokemon].battle(computer.pokemons[0])
+        computer_pokemon = computer_choose_pokémon()
+        result = player.pokemons[player_pokemon].battle(computer_pokemon)
         if not result and len(player.pokemons) == 1:
             print("You lost the game!")
             return
+        if result:
+            print("You won the game!")
+            if computer.pokemons not in player.pokemons:
+                player.add_pokemon(computer_pokemon)
+                print(f"You got {computer_pokemon}!")
         print("Do you want to keep playing?")
         keep_playing = input("yes/no: ")
         if keep_playing == 'no':
