@@ -79,7 +79,7 @@ class Move:
 
 
 @dataclass
-class Pokémon(ABC):
+class Pokemon(ABC):
     name: str
     type_: list[Type]
     hp: int
@@ -95,7 +95,7 @@ class Pokémon(ABC):
         """Calculate the level of the Pokémon."""
         return int(self.experience ** (1 / 3)) + 1
 
-    def battle(self, sb: 'Pokémon'):
+    def battle(self, sb: 'Pokemon'):
         self.hp = self.default_hp
         sb.hp = sb.default_hp
         """Pokémon battle."""
@@ -120,7 +120,7 @@ class Pokémon(ABC):
                 print(f"{self.name} fainted!")
                 return False
 
-    def calculate_damage(self, sb: 'Pokémon', move: Move):
+    def calculate_damage(self, sb: 'Pokemon', move: Move):
         """Calculate the damage of the move."""
         damage = (2 * self.level / 5 + 2) * move.power * self.attack / sb.defense / 50
         critical = 2 if random.randint(0, 511) < self.speed else 1
@@ -151,7 +151,7 @@ class Pokémon(ABC):
                    moves, data['HP'])
 
 
-class Player(Pokémon):
+class Player(Pokemon):
     def __init__(self, name: str, type_: list[Type], hp: int, attack: int, defense: int, speed: int, experience: int,
                  moves: list[Move], default_hp: int):
         super().__init__(name, type_, hp, attack, defense, speed, experience, moves, default_hp)
@@ -166,7 +166,7 @@ class Player(Pokémon):
         return self.moves[move - 1]
 
 
-class Computer(Pokémon):
+class Computer(Pokemon):
     def __init__(self, name: str, type_: list[Type], hp: int, attack: int, defense: int, speed: int, experience: int,
                  moves: list[Move], default_hp: int):
         super().__init__(name, type_, hp, attack, defense, speed, experience, moves, default_hp)
@@ -176,15 +176,15 @@ class Computer(Pokémon):
 
 
 @dataclass
-class Pokédex:
-    pokemons: list[Pokémon]
+class Pokedex:
+    pokemons: list[Pokemon]
 
-    def add_pokemon(self, pokemon: Pokémon):
+    def add_pokemon(self, pokemon: Pokemon):
         """Add a Pokémon to the Pokédex."""
         self.pokemons.append(pokemon)
         return self.pokemons.index(pokemon)
 
-    def remove_pokemon(self, pokemon: Pokémon):
+    def remove_pokemon(self, pokemon: Pokemon):
         """Remove a Pokémon from the Pokédex."""
         self.pokemons.remove(pokemon)
 
@@ -198,7 +198,7 @@ def introduction():
         print("Welcome back to the game!")
 
 
-def begin_choose_pokémon() -> Pokémon:
+def begin_choose_pokemon() -> Pokemon:
     """Choose a Pokémon to start with."""
     print("Choose a Pokémon to start with:")
     print("1. Bulbusaur")
@@ -217,13 +217,13 @@ def begin_choose_pokémon() -> Pokémon:
             return Player.from_dict("Squirtle")
 
 
-def computer_choose_pokémon() -> Pokémon:
+def computer_choose_pokemon() -> Pokemon:
     """The computer chooses a Pokémon."""
     pokemon = random.choice(list(CHARACTERS.keys()))
     return Computer.from_dict(pokemon)
 
 
-def choose_pokémon(pokemons) -> Pokémon:
+def choose_pokemon(pokemons) -> Pokemon:
     """Choose a Pokémon to start with."""
     print("Choose a Pokémon to start with:")
     for i in range(len(pokemons)):
@@ -240,10 +240,10 @@ def main():
     print(WELCOME)
     print('Welcome to the Pokémon game!')
     introduction()
-    player = Pokédex([begin_choose_pokémon()])
+    player = Pokedex([begin_choose_pokemon()])
     while True:
-        player_pokemon = player.pokemons.index(choose_pokémon(player.pokemons))
-        computer_pokemon = computer_choose_pokémon()
+        player_pokemon = player.pokemons.index(choose_pokemon(player.pokemons))
+        computer_pokemon = computer_choose_pokemon()
         result = player.pokemons[player_pokemon].battle(computer_pokemon)
         if not result and len(player.pokemons) == 1:
             print("You lost the game!")
