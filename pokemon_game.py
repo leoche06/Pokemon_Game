@@ -230,6 +230,8 @@ class Pokémon(ABC):
         return int(self.experience ** (1 / 3)) + 1
 
     def battle(self, sb: 'Pokémon'):
+        self.hp = self.default_hp
+        sb.hp = sb.default_hp
         """Pokémon battle."""
         while self.hp > 0 and sb.hp > 0:
             print(f"{self.name}'s HP: {self.hp:.2f}")
@@ -389,19 +391,17 @@ def main():
     introduction()
     player = Pokédex([begin_choose_pokémon()])
     print(f"You chose {player.pokemons[0].name}!")
-    computer = Pokédex([computer_choose_pokémon()])
-    print(f"The computer chose {computer.pokemons[0].name}!")
-    result = player.pokemons[0].battle(computer.pokemons[0])
-    player.pokemons[0].reset_hp()
-    computer.pokemons[0].reset_hp()
+    computer_pokemon = computer_choose_pokémon()
+    print(f"The computer chose {computer_pokemon.name}!")
+    result = player.pokemons[0].battle(computer_pokemon)
     if not result and len(player.pokemons) == 1:
         print("You lost the game!")
         return
     if result:
         print("You won the game!")
-        if computer.pokemons not in player.pokemons:
-            player.add_pokemon(computer.pokemons[0])
-            print(f"You got {computer.pokemons[0].name}!")
+        if computer_pokemon not in player.pokemons:
+            player.add_pokemon(computer_pokemon.name)
+            print(f"You got {computer_pokemon.name}!")
     print("Do you want to keep playing?")
     keep_playing = input("yes/no: ")
     if keep_playing == 'no':
@@ -416,9 +416,9 @@ def main():
             return
         if result:
             print("You won the game!")
-            if computer.pokemons not in player.pokemons:
-                player.add_pokemon(computer_pokemon)
-                print(f"You got {computer_pokemon}!")
+            if computer_pokemon not in player.pokemons:
+                player.add_pokemon(computer_pokemon.name)
+                print(f"You got {computer_pokemon.name}!")
         print("Do you want to keep playing?")
         keep_playing = input("yes/no: ")
         if keep_playing == 'no':
