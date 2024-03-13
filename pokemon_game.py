@@ -65,6 +65,7 @@ with open("./data/moves", "rb") as f:
     exec(zlib.decompress(f.read()).decode())
 
 
+
 @dataclass
 class Move:
     name: str
@@ -111,25 +112,25 @@ class Pokemon(ABC):
         atk.reset_hp()
         defend.reset_hp()
         """Pokémon battle."""
-        while self.hp > 0 and sb.hp > 0:
-            console.print(f"{self.name}'s HP: {self.hp:.2f}", style="bold green")
-            console.print(f"{sb.name}'s HP: {sb.hp:.2f}", style="bold yellow")
-            move = self.choose_move()
-            damage = self.calculate_damage(sb, move)
-            sb.hp -= damage
-            console.print(f"{self.name} used {move.name}!", style="bold green")
-            console.print(f"{sb.name} lost {damage:.2f} HP!", style="bold yellow")
-            if sb.hp <= 0:
-                console.print(f"{sb.name} fainted!", style="bold yellow")
-                self.experience += sb.experience
+        while atk.hp > 0 and defend.hp > 0:
+            console.print(f"{atk.name}'s HP: {atk.hp:.2f}/{atk.default_hp} DEF: {atk.defense} ATK: {atk.attack} LV: {atk.level} SPEED: {atk.speed}", style="bold green")
+            console.print(f"{defend.name}'s HP: {defend.hp:.2f}/{defend.default_hp} DEF: {defend.defense} ATK: {defend.attack} LV: {defend.level} SPEED: {defend.speed}", style="bold yellow")
+            move = atk.choose_move()
+            damage = atk.calculate_damage(defend, move)
+            defend.hp -= damage
+            console.print(f"{atk.name} used {move.name}!", style="bold green")
+            console.print(f"{defend.name} lost {damage:.2f} HP!", style="bold yellow")
+            if defend.hp <= 0:
+                console.print(f"{defend.name} fainted!", style="bold yellow")
+                atk.experience += defend.experience
                 return True
-            move = sb.choose_move()
-            damage = sb.calculate_damage(self, move)
-            self.hp -= damage
-            console.print(f"{sb.name} used {move.name}!", style="bold yellow")
-            console.print(f"{self.name} lost {damage:.2f} HP!", style="bold green")
-            if self.hp <= 0:
-                console.print(f"{self.name} fainted!", style="bold red")
+            move = defend.choose_move()
+            damage = defend.calculate_damage(atk, move)
+            atk.hp -= damage
+            console.print(f"{defend.name} used {move.name}!", style="bold yellow")
+            console.print(f"{atk.name} lost {damage:.2f} HP!", style="bold green")
+            if atk.hp <= 0:
+                console.print(f"{atk.name} fainted!", style="bold red")
                 return False
 
     def calculate_damage(self, sb: 'Pokemon', move: Move):
