@@ -273,10 +273,13 @@ class Pokémon(ABC):
     def choose_move(self):
         """Choose a move to attack the other Pokémon."""
         pass
-    
-    @abstractmethod
-    def from_dict(name: str, data: dict):
-        pass
+
+    @classmethod
+    def from_dict(cls, name: str, data: dict):
+        """Transfer the data from the dictionary to the Pokémon class."""
+        moves = [Move.from_dict(MOVES_DICTIONARY[move]) for move in data['Moves']]
+        return cls(name, data['Type'], data['HP'], data['Attack'], data['Defense'], data['Speed'], data['Experience'],
+                   moves, data['HP'])
 
 
 class Player(Pokémon):
@@ -292,11 +295,6 @@ class Player(Pokémon):
         while move not in range(1, len(self.moves) + 1):
             move = int(input(f"Invalid input! Choose a move (1-{len(self.moves)}): "))
         return self.moves[move - 1]
-    
-    def from_dict(name: str, data: dict):
-        moves = [Move.from_dict(MOVES_DICTIONARY[move]) for move in data['Moves']]
-        return Player(name, data['Type'], data['HP'], data['Attack'], data['Defense'], data['Speed'], data['Experience'],
-                      moves, data['HP'])
 
 
 class Computer(Pokémon):
@@ -306,11 +304,6 @@ class Computer(Pokémon):
     
     def choose_move(self):
         return self.moves[random.randint(0, len(self.moves) - 1)]
-    
-    def from_dict(name: str, data: dict):
-        moves = [Move.from_dict(MOVES_DICTIONARY[move]) for move in data['Moves']]
-        return Computer(name, data['Type'], data['HP'], data['Attack'], data['Defense'], data['Speed'], data['Experience'],
-                        moves, data['HP'])
 
 
 @dataclass
