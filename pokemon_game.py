@@ -45,9 +45,13 @@ class MoveDict(TypedDict):
     not_very_effective_against: list[Type]
 
 
+INTRO: str
 WELCOME: str
 CHARACTERS: dict[str, Character]
 MOVES_DICTIONARY: dict[str, MoveDict]
+
+with open("./data/intro", "rb") as f:
+    INTRO = zlib.decompress(f.read()).decode()
 
 with open("./data/welcome", "rb") as f:
     WELCOME = zlib.decompress(f.read()).decode()
@@ -189,25 +193,9 @@ def introduction():
     """Introduce the game to the user."""
     new = input("Are you new to this game? (yes/no): ")
     if new == 'yes':
-        # introduce user how this game works
-        print("This is a turn-based game. You will be given a Pokémon and you will have to battle other Pokémon.")
-        print("You can choose 1 Pokémon from 3 Pokémon to start with. Each Pokémon has different stats and moves.")
-        print("You can choose a move to attack the other Pokémon.")
-        print("Your Pokémon has several stats such as HP, Attack, Defense, and Speed.")
-        print("HP is the health points of your Pokémon. When it reaches 0, your Pokémon faints.")
-        print("Attack is the strength of your Pokémon's attack.")
-        print("Defense is the strength of your Pokémon's defense.")
-        print("Speed is the speed of your Pokémon. The Pokémon with the higher speed will attack first.")
-        # damage calculation
-        print("The damage of your Pokémon's move is calculated by the following formula:")
-        print("damage = (2 * level / 5 + 2) * move_power * attack / defense / 50 + 2")
-        print("The level of your Pokémon is calculated by the following formula:")
-        print("level = experience ** (1 / 3) + 1")
-        print("The damage can be critical. The chance of a critical hit is determined by the speed of your Pokémon.")
-        print("The damage can be random. The damage is multiplied by a random number between 0.85 and 1.0.")
-        print("The game ends when all your Pokémon are fainted.")
+        print(INTRO)
     else:
-        print("Goodbye!")
+        print("Welcome back to the game!")
 
 
 def begin_choose_pokémon() -> Pokémon:
