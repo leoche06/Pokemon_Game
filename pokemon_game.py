@@ -2,6 +2,7 @@ import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
+from typing import TypedDict
 
 WELCOME = """
                                   ,'\\
@@ -40,7 +41,17 @@ class Type(Enum):
     FAIRY = 18
 
 
-CHARACTERS = {
+class Character(TypedDict):
+    Type: list[Type]
+    HP: int
+    Moves: list[str]
+    Attack: int
+    Defense: int
+    Speed: int
+    Experience: int
+
+
+CHARACTERS: dict[str, Character] = {
     'Pikachu': {'Type': [Type.NORMAL], 'HP': 35, 'Moves': ['Thunder Shock', 'Double Kick', 'Thunderbolt'],
                 'Attack': 55, 'Defense': 40, 'Speed': 90, 'Experience': 112},
     'Charizard': {'Type': [Type.FIRE, Type.FLYING], 'HP': 78, 'Moves': ['Crunch', 'Ember', 'Scratch', 'Wing Attack'],
@@ -277,8 +288,9 @@ class Pokémon(ABC):
         pass
 
     @classmethod
-    def from_dict(cls, name: str, data: dict):
+    def from_dict(cls, name: str):
         """Transfer the data from the dictionary to the Pokémon class."""
+        data = CHARACTERS[name]
         moves = [Move.from_dict(MOVES_DICTIONARY[move]) for move in data['Moves']]
         return cls(name, data['Type'], data['HP'], data['Attack'], data['Defense'], data['Speed'], data['Experience'],
                    moves, data['HP'])
@@ -359,17 +371,17 @@ def begin_choose_pokémon() -> Pokémon:
         pokemon = input("Choose a Pokémon (1/2/3): ")
     match pokemon:
         case '1':
-            return Player.from_dict("Bulbasaur", CHARACTERS['Bulbasaur'])
+            return Player.from_dict("Bulbasaur")
         case '2':
-            return Player.from_dict("Charmander", CHARACTERS['Charmander'])
+            return Player.from_dict("Charmander")
         case '3':
-            return Player.from_dict("Squirtle", CHARACTERS['Squirtle'])
+            return Player.from_dict("Squirtle")
 
 
 def computer_choose_pokémon() -> Pokémon:
     """The computer chooses a Pokémon."""
     pokemon = random.choice(list(CHARACTERS.keys()))
-    return Computer.from_dict(pokemon, CHARACTERS[pokemon])
+    return Computer.from_dict(pokemon)
 
 
 def choose_pokémon(pokemons) -> Pokémon:
@@ -400,7 +412,7 @@ def main():
     if result:
         print("You won the game!")
         if computer_pokemon not in player.pokemons:
-            player.add_pokemon(computer_pokemon.name)
+            player.add_pokemon(Player.from_dict(computer_pokemon.name))
             print(f"You got {computer_pokemon.name}!")
     print("Do you want to keep playing?")
     keep_playing = input("yes/no: ")
@@ -417,7 +429,7 @@ def main():
         if result:
             print("You won the game!")
             if computer_pokemon not in player.pokemons:
-                player.add_pokemon(computer_pokemon.name)
+                player.add_pokemon(Player.from_dict(computer_pokemon.name))
                 print(f"You got {computer_pokemon.name}!")
         print("Do you want to keep playing?")
         keep_playing = input("yes/no: ")
