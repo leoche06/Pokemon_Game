@@ -284,4 +284,5 @@ def main():
 
 
 if __name__ == '__main__':
+    buy_me_a_coffee()
     main()
