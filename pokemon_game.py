@@ -206,9 +206,9 @@ def introduction():
 def begin_choose_pokemon() -> Pokemon:
     """Choose a Pokémon to start with."""
     console.print("Choose a Pokémon to start with:", style="bold green")
-    console.print("1. Bulbusaur", style="bold green")
-    console.print("2. Charmander", style="bold green")
-    console.print("3. Squirtle", style="bold green")
+    console.print("1. Bulbusaur [Poison, Grass]", style="bold green")
+    console.print("2. Charmander [Fire]", style="bold green")
+    console.print("3. Squirtle [Water]", style="bold green")
     pokemon = console.input("Choose a Pokémon (1/2/3): ")
     while pokemon not in ['1', '2', '3']:
         console.print("Invalid input! Please choose a Pokémon from 1 to 3.", style="bold red")
@@ -248,8 +248,9 @@ def main():
     player = Pokedex([begin_choose_pokemon()])
 
     while True:
-        player_pokemon = player.pokemons.index(choose_pokemon(player.pokemons))
         computer_pokemon = computer_choose_pokemon()
+        console.print(f"The computer chose {computer_pokemon.name} ({[type_.name for type_ in computer_pokemon.type_]})", style="bold yellow")
+        player_pokemon = player.pokemons.index(choose_pokemon(player.pokemons))
         result = player.pokemons[player_pokemon].battle(computer_pokemon)
         if not result and len(player.pokemons) == 1:
             console.print("You lost the game!", style="bold red")
