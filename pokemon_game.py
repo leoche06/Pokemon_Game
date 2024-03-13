@@ -165,7 +165,7 @@ class Pokemon(ABC):
         """Transfer the data from the dictionary to the Pokémon class."""
         data = CHARACTERS[name]
         moves = [Move.from_dict(MOVES_DICTIONARY[move]) for move in data['Moves']]
-        return cls(name, data['Type'], data['HP'], data['Attack'], data['Defense'], data['Speed'], data['Experience'],
+        return cls(name, data['Type'], data['HP'], data['Attack'], data['Defense'], data['Speed'], 0,
                    moves, data['HP'])
 
 
@@ -241,7 +241,9 @@ def begin_choose_pokemon() -> Pokemon:
 def computer_choose_pokemon() -> Pokemon:
     """The computer chooses a Pokémon."""
     pokemon = random.choice(list(CHARACTERS.keys()))
-    return Computer.from_dict(pokemon)
+    res = Computer.from_dict(pokemon)
+    res.experience = random.randint(1, 100)
+    return res
 
 
 def choose_pokemon(pokemons) -> Pokemon:
