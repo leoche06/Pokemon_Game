@@ -349,17 +349,17 @@ def begin_choose_pokémon(player) -> Pokémon:
         pokemon = input("Choose a Pokémon (1/2/3): ")
     match pokemon:
         case '1':
-            return Pokémon.from_dict("Bulbasaur", CHARACTERS['Bulbasaur'])
+            return Player.from_dict("Bulbasaur", CHARACTERS['Bulbasaur'])
         case '2':
-            return Pokémon.from_dict("Charmander", CHARACTERS['Charmander'])
+            return Player.from_dict("Charmander", CHARACTERS['Charmander'])
         case '3':
-            return Pokémon.from_dict("Squirtle", CHARACTERS['Squirtle'])
+            return Player.from_dict("Squirtle", CHARACTERS['Squirtle'])
 
 
 def computer_choose_pokémon() -> Pokémon:
     """The computer chooses a Pokémon."""
     pokemon = random.choice(list(CHARACTERS.keys()))
-    return Pokémon.from_dict(pokemon, CHARACTERS[pokemon])
+    return Computer.from_dict(pokemon, CHARACTERS[pokemon])
 
 
 def choose_pokémon(pokemons) -> Pokémon:
