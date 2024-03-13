@@ -241,25 +241,8 @@ def main():
     print('Welcome to the Pokémon game!')
     introduction()
     player = Pokédex([begin_choose_pokémon()])
-    print(f"You chose {player.pokemons[0].name}!")
-    computer_pokemon = computer_choose_pokémon()
-    print(f"The computer chose {computer_pokemon.name}!")
-    result = player.pokemons[0].battle(computer_pokemon)
-    if not result and len(player.pokemons) == 1:
-        print("You lost the game!")
-        return
-    if result:
-        print("You won the game!")
-        if computer_pokemon.name not in [pokemon.name for pokemon in player.pokemons]:
-            player.add_pokemon(Player.from_dict(computer_pokemon.name))
-            print(f"You got {computer_pokemon.name}!")
-    print("Do you want to keep playing?")
-    keep_playing = input("yes/no: ")
-    if keep_playing == 'no':
-        print("Goodbye!")
-        return
-    player_pokemon = player.add_pokemon(choose_pokémon(player.pokemons))
     while True:
+        player_pokemon = player.pokemons.index(choose_pokémon(player.pokemons))
         computer_pokemon = computer_choose_pokémon()
         result = player.pokemons[player_pokemon].battle(computer_pokemon)
         if not result and len(player.pokemons) == 1:
@@ -275,7 +258,6 @@ def main():
         if keep_playing == 'no':
             print("Goodbye!")
             return
-        player_pokemon = player.pokemons.index(choose_pokémon(player.pokemons))
 
 
 if __name__ == '__main__':
