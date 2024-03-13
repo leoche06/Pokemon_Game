@@ -112,6 +112,7 @@ class Pokemon(ABC):
         return int(self.experience ** (1 / 3)) + 1
 
     def battle(self, sb: "Pokemon"):
+        """Battle between two Pokémon."""
         cmp = self.speed - sb.speed
         if cmp > 0:
             atk, defend = self, sb
@@ -212,11 +213,13 @@ class Player(Pokemon):
         moves: list[Move],
         default_hp: int,
     ):
+        """Initialize the Pokémon class."""
         super().__init__(
             name, type_, hp, attack, defense, speed, experience, moves, default_hp
         )
 
     def choose_move(self):
+        """Choose a move to attack the other Pokémon."""
         console.print(f"Choose a move for {self.name}:", style="bold green")
         for i in range(len(self.moves)):
             console.print(f"{i + 1}. {self.moves[i].name}", style="bold blue", end=" ")
@@ -245,11 +248,13 @@ class Computer(Pokemon):
         moves: list[Move],
         default_hp: int,
     ):
+        """Initialize the Pokémon class."""
         super().__init__(
             name, type_, hp, attack, defense, speed, experience, moves, default_hp
         )
 
     def choose_move(self):
+        """Choose a move to attack the other Pokémon."""
         return self.moves[random.randint(0, len(self.moves) - 1)]
 
 
