@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
 
-
 WELCOME = """
                                   ,'\\
     _.----.        ____         ,'  _\\   ___    ___     ____
@@ -230,7 +229,6 @@ class Pokémon(ABC):
         """Calculate the level of the Pokémon."""
         return int(self.experience ** (1 / 3)) + 1
 
-    @ABC.abstractmethod
     def battle(self, sb: 'Pokémon'):
         """Pokémon battle."""
         while self.hp > 0 and sb.hp > 0:
@@ -243,7 +241,7 @@ class Pokémon(ABC):
             print(f"{sb.name} lost {damage} HP!")
             if sb.hp <= 0:
                 print(f"{sb.name} fainted!")
-                self.exp += sb.experience
+                self.experience += sb.experience
                 break
             move = sb.choose_move()
             damage = sb.calculate_damage(self, move)
@@ -253,7 +251,7 @@ class Pokémon(ABC):
             if self.hp <= 0:
                 print(f"{self.name} fainted!")
                 return False
-        
+
     def calculate_damage(self, sb: 'Pokémon', move: Move):
         """Calculate the damage of the move."""
         damage = (2 * self.level / 5 + 2) * move.power * self.attack / sb.defense / 50
@@ -277,9 +275,15 @@ class Pokémon(ABC):
         moves = [Move.from_dict(MOVES_DICTIONARY[move]) for move in data['Moves']]
         return Pokémon(name, data['Type'], data['HP'], data['Attack'], data['Defense'], data['Speed'],
                        data['Experience'], moves, data['HP'])
-    
+
+    @abstractmethod
     def choose_move(self):
         """Choose a move to attack the other Pokémon."""
+        pass
+
+
+class Player(Pokémon):
+    def choose_move(self):
         print(f"{self.name}'s moves:")
         for i, move in enumerate(self.moves):
             print(f"{i + 1}. {move.name}")
@@ -287,15 +291,12 @@ class Pokémon(ABC):
         while move not in range(1, len(self.moves) + 1):
             move = int(input(f"Invalid input! Choose a move (1-{len(self.moves)}): "))
         return self.moves[move - 1]
-    
-class Player(Pokémon):
-    def choose_move(self):
-        return super().choose_move()
-    
-    
+
+
 class Computer(Pokémon):
     def choose_move(self):
         return self.moves[random.randint(0, len(self.moves) - 1)]
+
 
 @dataclass
 class Pokédex:
@@ -360,6 +361,7 @@ def computer_choose_pokémon() -> Pokémon:
     pokemon = random.choice(list(CHARACTERS.keys()))
     return Pokémon.from_dict(pokemon, CHARACTERS[pokemon])
 
+
 def choose_pokémon(pokemons) -> Pokémon:
     """Choose a Pokémon to start with."""
     print("Choose a Pokémon to start with:")
@@ -370,6 +372,7 @@ def choose_pokémon(pokemons) -> Pokémon:
         print(f"Invalid input! Please choose a Pokémon from 1 to {len(pokemons)}.")
         pokemon = input(f"Choose a Pokémon (1-{len(pokemons)}): ")
     return pokemons[int(pokemon) - 1]
+
 
 def main():
     """The main function of the game."""
@@ -396,8 +399,6 @@ def main():
         player.add_pokemon(choose_pokémon(player.pokemons))
     while True:
         player.add
-        
-        
 
 
 if __name__ == '__main__':
