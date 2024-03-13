@@ -65,6 +65,12 @@ with open("./data/moves", "rb") as f:
     exec(zlib.decompress(f.read()).decode())
 
 
+def buy_me_a_coffee():
+    """Buy me a coffee!"""
+    console.print("If you like the game, please consider buying me a coffee!", style="bold green")
+    console.print("https://www.buymeacoffee.com/brandenxia", style="bold green")
+
+
 @dataclass
 class Move:
     name: str
@@ -278,4 +284,5 @@ def main():
 
 
 if __name__ == '__main__':
+    buy_me_a_coffee()
     main()
