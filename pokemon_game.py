@@ -98,8 +98,18 @@ class Pokemon(ABC):
         return int(self.experience ** (1 / 3)) + 1
 
     def battle(self, sb: 'Pokemon'):
-        self.hp = self.default_hp
-        sb.hp = sb.default_hp
+        cmp = self.speed - sb.speed
+        if cmp > 0:
+            atk, defend = self, sb
+        elif cmp < 0:
+            atk, defend = sb, self
+        else:
+            atk, defend = self, sb
+            if random.randint(0, 1):
+                atk, defend = sb, self
+
+        atk.reset_hp()
+        defend.reset_hp()
         """Pokémon battle."""
         while self.hp > 0 and sb.hp > 0:
             console.print(f"{self.name}'s HP: {self.hp:.2f}", style="bold green")
