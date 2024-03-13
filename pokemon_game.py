@@ -1,10 +1,11 @@
 import random
-from rich.console import Console
 import zlib
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
 from typing import TypedDict
+
+from rich.console import Console
 
 
 class Type(Enum):
@@ -67,7 +68,9 @@ with open("./data/moves", "rb") as f:
 
 def buy_me_a_coffee():
     """Buy me a coffee!"""
-    console.print("If you like the game, please consider buying me a coffee!", style="bold green")
+    console.print(
+        "If you like the game, please consider buying me a coffee!", style="bold green"
+    )
     console.print("https://www.buymeacoffee.com/brandenxia", style="bold green")
 
 
@@ -82,8 +85,13 @@ class Move:
     @staticmethod
     def from_dict(data: dict):
         """Transfer the data from the dictionary to the Move class."""
-        return Move(data['name'], data['power'], data['type'], data['super effective against'],
-                    data['not very effective against'])
+        return Move(
+            data["name"],
+            data["power"],
+            data["type"],
+            data["super effective against"],
+            data["not very effective against"],
+        )
 
 
 @dataclass
@@ -103,7 +111,7 @@ class Pokemon(ABC):
         """Calculate the level of the Pokémon."""
         return int(self.experience ** (1 / 3)) + 1
 
-    def battle(self, sb: 'Pokemon'):
+    def battle(self, sb: "Pokemon"):
         cmp = self.speed - sb.speed
         if cmp > 0:
             atk, defend = self, sb
@@ -118,8 +126,14 @@ class Pokemon(ABC):
         defend.reset_hp()
         """Pokémon battle."""
         while atk.hp > 0 and defend.hp > 0:
-            console.print(f"{atk.name}'s HP: {atk.hp:.2f}/{atk.default_hp} DEF: {atk.defense} ATK: {atk.attack} LV: {atk.level} SPEED: {atk.speed}", style="bold green")
-            console.print(f"{defend.name}'s HP: {defend.hp:.2f}/{defend.default_hp} DEF: {defend.defense} ATK: {defend.attack} LV: {defend.level} SPEED: {defend.speed}", style="bold yellow")
+            console.print(
+                f"{atk.name}'s HP: {atk.hp:.2f}/{atk.default_hp} DEF: {atk.defense} ATK: {atk.attack} LV: {atk.level} SPEED: {atk.speed}",
+                style="bold green",
+            )
+            console.print(
+                f"{defend.name}'s HP: {defend.hp:.2f}/{defend.default_hp} DEF: {defend.defense} ATK: {defend.attack} LV: {defend.level} SPEED: {defend.speed}",
+                style="bold yellow",
+            )
             move = atk.choose_move()
             damage = atk.calculate_damage(defend, move)
             defend.hp -= damage
@@ -138,7 +152,7 @@ class Pokemon(ABC):
                 console.print(f"{atk.name} fainted!", style="bold red")
                 return False
 
-    def calculate_damage(self, sb: 'Pokemon', move: Move):
+    def calculate_damage(self, sb: "Pokemon", move: Move):
         """Calculate the damage of the move."""
         damage = (2 * self.level / 5 + 2) * move.power * self.attack / sb.defense / 50
         critical = 2 if random.randint(0, 511) < self.speed else 1
@@ -164,15 +178,36 @@ class Pokemon(ABC):
     def from_dict(cls, name: str):
         """Transfer the data from the dictionary to the Pokémon class."""
         data = CHARACTERS[name]
-        moves = [Move.from_dict(MOVES_DICTIONARY[move]) for move in data['Moves']]
-        return cls(name, data['Type'], data['HP'], data['Attack'], data['Defense'], data['Speed'], 0,
-                   moves, data['HP'])
+        moves = [Move.from_dict(MOVES_DICTIONARY[move]) for move in data["Moves"]]
+        return cls(
+            name,
+            data["Type"],
+            data["HP"],
+            data["Attack"],
+            data["Defense"],
+            data["Speed"],
+            0,
+            moves,
+            data["HP"],
+        )
 
 
 class Player(Pokemon):
-    def __init__(self, name: str, type_: list[Type], hp: int, attack: int, defense: int, speed: int, experience: int,
-                 moves: list[Move], default_hp: int):
-        super().__init__(name, type_, hp, attack, defense, speed, experience, moves, default_hp)
+    def __init__(
+        self,
+        name: str,
+        type_: list[Type],
+        hp: int,
+        attack: int,
+        defense: int,
+        speed: int,
+        experience: int,
+        moves: list[Move],
+        default_hp: int,
+    ):
+        super().__init__(
+            name, type_, hp, attack, defense, speed, experience, moves, default_hp
+        )
 
     def choose_move(self):
         console.print(f"Choose a move for {self.name}:", style="bold green")
@@ -182,15 +217,30 @@ class Player(Pokemon):
             console.print(f"({self.moves[i].power} power)", style="white")
         move = int(console.input(f"Choose a move (1-{len(self.moves)}): "))
         while move not in range(1, len(self.moves) + 1):
-            console.print(f"Invalid input! Please choose a move from 1 to {len(self.moves)}.", style="bold red")
+            console.print(
+                f"Invalid input! Please choose a move from 1 to {len(self.moves)}.",
+                style="bold red",
+            )
             move = int(console.input(f"Choose a move (1-{len(self.moves)}): "))
         return self.moves[move - 1]
 
 
 class Computer(Pokemon):
-    def __init__(self, name: str, type_: list[Type], hp: int, attack: int, defense: int, speed: int, experience: int,
-                 moves: list[Move], default_hp: int):
-        super().__init__(name, type_, hp, attack, defense, speed, experience, moves, default_hp)
+    def __init__(
+        self,
+        name: str,
+        type_: list[Type],
+        hp: int,
+        attack: int,
+        defense: int,
+        speed: int,
+        experience: int,
+        moves: list[Move],
+        default_hp: int,
+    ):
+        super().__init__(
+            name, type_, hp, attack, defense, speed, experience, moves, default_hp
+        )
 
     def choose_move(self):
         return self.moves[random.randint(0, len(self.moves) - 1)]
@@ -213,7 +263,7 @@ class Pokedex:
 def introduction():
     """Introduce the game to the user."""
     new = console.input("Are you new to this game? (yes/no): ")
-    if new == 'yes':
+    if new == "yes":
         console.print(INTRO, style="bold green")
     else:
         console.print("Welcome back to the Pokémon game!", style="bold green")
@@ -226,15 +276,17 @@ def begin_choose_pokemon() -> Pokemon:
     console.print("2. Charmander [Fire]", style="bold green")
     console.print("3. Squirtle [Water]", style="bold green")
     pokemon = console.input("Choose a Pokémon (1/2/3): ")
-    while pokemon not in ['1', '2', '3']:
-        console.print("Invalid input! Please choose a Pokémon from 1 to 3.", style="bold red")
+    while pokemon not in ["1", "2", "3"]:
+        console.print(
+            "Invalid input! Please choose a Pokémon from 1 to 3.", style="bold red"
+        )
         pokemon = console.input("Choose a Pokémon (1/2/3): ")
     match pokemon:
-        case '1':
+        case "1":
             return Player.from_dict("Bulbasaur")
-        case '2':
+        case "2":
             return Player.from_dict("Charmander")
-        case '3':
+        case "3":
             return Player.from_dict("Squirtle")
 
 
@@ -253,7 +305,10 @@ def choose_pokemon(pokemons) -> Pokemon:
         console.print(f"{i + 1}. {pokemons[i].name}", style="bold green")
     pokemon = int(console.input(f"Choose a Pokémon (1-{len(pokemons)}): "))
     while pokemon not in range(1, len(pokemons) + 1):
-        console.print(f"Invalid input! Please choose a Pokémon from 1 to {len(pokemons)}.", style="bold red")
+        console.print(
+            f"Invalid input! Please choose a Pokémon from 1 to {len(pokemons)}.",
+            style="bold red",
+        )
         pokemon = int(console.input(f"Choose a Pokémon (1-{len(pokemons)}): "))
     return pokemons[pokemon - 1]
 
@@ -267,7 +322,10 @@ def main():
 
     while True:
         computer_pokemon = computer_choose_pokemon()
-        console.print(f"The computer chose {computer_pokemon.name} ({[type_.name for type_ in computer_pokemon.type_]})", style="bold yellow")
+        console.print(
+            f"The computer chose {computer_pokemon.name} ({[type_.name for type_ in computer_pokemon.type_]})",
+            style="bold yellow",
+        )
         player_pokemon = player.pokemons.index(choose_pokemon(player.pokemons))
         result = player.pokemons[player_pokemon].battle(computer_pokemon)
         if not result and len(player.pokemons) == 1:
@@ -275,16 +333,22 @@ def main():
             return
         if result:
             console.print("You won the game!", style="bold green")
-            if computer_pokemon.name not in [pokemon.name for pokemon in player.pokemons]:
+            if computer_pokemon.name not in [
+                pokemon.name for pokemon in player.pokemons
+            ]:
                 player.add_pokemon(Player.from_dict(computer_pokemon.name))
-                console.print(f"You caught {computer_pokemon.name}!", style="bold green")
+                console.print(
+                    f"You caught {computer_pokemon.name}!", style="bold green"
+                )
         console.print("Do you want to continue playing?", style="bold green")
         keep_playing = console.input("yes/no: ")
-        if keep_playing == 'no':
-            console.print("Thank you for playing the game! Goodbye!", style="bold green")
+        if keep_playing == "no":
+            console.print(
+                "Thank you for playing the game! Goodbye!", style="bold green"
+            )
             return
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     buy_me_a_coffee()
     main()
