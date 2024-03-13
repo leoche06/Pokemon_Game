@@ -1,5 +1,5 @@
 import random
-
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
 
@@ -214,7 +214,7 @@ class Move:
 
 
 @dataclass
-class Pokémon:
+class Pokémon(ABC):
     name: str
     type_: list[Type]
     hp: int
@@ -230,34 +230,30 @@ class Pokémon:
         """Calculate the level of the Pokémon."""
         return int(self.experience ** (1 / 3)) + 1
 
+    @ABC.abstractmethod
     def battle(self, sb: 'Pokémon'):
         """Pokémon battle."""
         while self.hp > 0 and sb.hp > 0:
             print(f"{self.name}'s HP: {self.hp}")
             print(f"{sb.name}'s HP: {sb.hp}")
-            print(f"{self.name}'s moves:")
-            for i, move in enumerate(self.moves):
-                print(f"{i + 1}. {move.name}")
-            move = int(input(f"Choose a move (1-{len(self.moves)}): "))
-            while move not in range(1, len(self.moves) + 1):
-                move = int(input(f"Invalid input! Choose a move (1-{len(self.moves)}): "))
-            move = self.moves[move - 1]
+            move = self.choose_move()
             damage = self.calculate_damage(sb, move)
             sb.hp -= damage
             print(f"{self.name} used {move.name}!")
             print(f"{sb.name} lost {damage} HP!")
             if sb.hp <= 0:
                 print(f"{sb.name} fainted!")
+                self.exp += sb.experience
                 break
-            move = sb.moves[random.randint(0, len(sb.moves) - 1)]
+            move = sb.choose_move()
             damage = sb.calculate_damage(self, move)
             self.hp -= damage
             print(f"{sb.name} used {move.name}!")
             print(f"{self.name} lost {damage} HP!")
             if self.hp <= 0:
                 print(f"{self.name} fainted!")
-                return
-
+                return False
+        
     def calculate_damage(self, sb: 'Pokémon', move: Move):
         """Calculate the damage of the move."""
         damage = (2 * self.level / 5 + 2) * move.power * self.attack / sb.defense / 50
@@ -281,7 +277,25 @@ class Pokémon:
         moves = [Move.from_dict(MOVES_DICTIONARY[move]) for move in data['Moves']]
         return Pokémon(name, data['Type'], data['HP'], data['Attack'], data['Defense'], data['Speed'],
                        data['Experience'], moves, data['HP'])
-
+    
+    def choose_move(self):
+        """Choose a move to attack the other Pokémon."""
+        print(f"{self.name}'s moves:")
+        for i, move in enumerate(self.moves):
+            print(f"{i + 1}. {move.name}")
+        move = int(input(f"Choose a move (1-{len(self.moves)}): "))
+        while move not in range(1, len(self.moves) + 1):
+            move = int(input(f"Invalid input! Choose a move (1-{len(self.moves)}): "))
+        return self.moves[move - 1]
+    
+class Player(Pokémon):
+    def choose_move(self):
+        return super().choose_move()
+    
+    
+class Computer(Pokémon):
+    def choose_move(self):
+        return self.moves[random.randint(0, len(self.moves) - 1)]
 
 @dataclass
 class Pokédex:
@@ -322,7 +336,7 @@ def introduction():
         print("Goodbye!")
 
 
-def choose_pokémon() -> Pokémon:
+def begin_choose_pokémon(player) -> Pokémon:
     """Choose a Pokémon to start with."""
     print("Choose a Pokémon to start with:")
     print("1. Bulbusaur")
@@ -346,25 +360,44 @@ def computer_choose_pokémon() -> Pokémon:
     pokemon = random.choice(list(CHARACTERS.keys()))
     return Pokémon.from_dict(pokemon, CHARACTERS[pokemon])
 
+def choose_pokémon(pokemons) -> Pokémon:
+    """Choose a Pokémon to start with."""
+    print("Choose a Pokémon to start with:")
+    for i in range(len(pokemons)):
+        print(f"{i + 1}. {pokemons[i].name}")
+    pokemon = input(f"Choose a Pokémon (1-{len(pokemons)}): ")
+    while pokemon not in [str(i) for i in range(1, len(pokemons) + 1)]:
+        print(f"Invalid input! Please choose a Pokémon from 1 to {len(pokemons)}.")
+        pokemon = input(f"Choose a Pokémon (1-{len(pokemons)}): ")
+    return pokemons[int(pokemon) - 1]
 
 def main():
     """The main function of the game."""
     print(WELCOME)
     print('Welcome to the Pokémon game!')
     introduction()
-    player = Pokédex([choose_pokémon()])
+    player = Pokédex([begin_choose_pokémon()])
     print(f"You chose {player.pokemons[0].name}!")
+    computer = Pokédex([computer_choose_pokémon()])
+    print(f"The computer chose {computer.pokemons[0].name}!")
+    result = player.pokemons[0].battle(computer.pokemons[0])
+    player.pokemons[0].reset_hp()
+    computer.pokemons[0].reset_hp()
+    player.add_pokemon(computer.pokemons[0])
+    if not result and len(player.pokemons) == 1:
+        print("You lost the game!")
+        return
+    print("Do you want to keep playing?")
+    keep_playing = input("yes/no: ")
+    if keep_playing == 'no':
+        print("Goodbye!")
+        return
+    else:
+        player.add_pokemon(choose_pokémon(player.pokemons))
     while True:
-        computer = Pokédex([computer_choose_pokémon()])
-        print(f"The computer chose {computer.pokemons[0].name}!")
-        player.pokemons[0].battle(computer.pokemons[0])
-        player.pokemons[0].reset_hp()
-        computer.pokemons[0].reset_hp()
-        print("Do you want to play again?")
-        play_again = input("yes/no: ")
-        if play_again == 'no':
-            print("Goodbye!")
-            break
+        player.add
+        
+        
 
 
 if __name__ == '__main__':
