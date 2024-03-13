@@ -232,13 +232,13 @@ class Pokémon(ABC):
     def battle(self, sb: 'Pokémon'):
         """Pokémon battle."""
         while self.hp > 0 and sb.hp > 0:
-            print(f"{self.name}'s HP: {self.hp}")
-            print(f"{sb.name}'s HP: {sb.hp}")
+            print(f"{self.name}'s HP: {self.hp:.2f}")
+            print(f"{sb.name}'s HP: {sb.hp:.2f}")
             move = self.choose_move()
             damage = self.calculate_damage(sb, move)
             sb.hp -= damage
             print(f"{self.name} used {move.name}!")
-            print(f"{sb.name} lost {damage} HP!")
+            print(f"{sb.name} lost {damage:.2f} HP!")
             if sb.hp <= 0:
                 print(f"{sb.name} fainted!")
                 self.experience += sb.experience
@@ -247,7 +247,7 @@ class Pokémon(ABC):
             damage = sb.calculate_damage(self, move)
             self.hp -= damage
             print(f"{sb.name} used {move.name}!")
-            print(f"{self.name} lost {damage} HP!")
+            print(f"{self.name} lost {damage:.2f} HP!")
             if self.hp <= 0:
                 print(f"{self.name} fainted!")
                 return False
@@ -284,9 +284,9 @@ class Pokémon(ABC):
 
 class Player(Pokémon):
     def __init__(self, name: str, type_: list[Type], hp: int, attack: int, defense: int, speed: int, experience: int,
-                    moves: list[Move], default_hp: int):
+                 moves: list[Move], default_hp: int):
         super().__init__(name, type_, hp, attack, defense, speed, experience, moves, default_hp)
-    
+
     def choose_move(self):
         print(f"{self.name}'s moves:")
         for i, move in enumerate(self.moves):
@@ -299,9 +299,9 @@ class Player(Pokémon):
 
 class Computer(Pokémon):
     def __init__(self, name: str, type_: list[Type], hp: int, attack: int, defense: int, speed: int, experience: int,
-                    moves: list[Move], default_hp: int):
+                 moves: list[Move], default_hp: int):
         super().__init__(name, type_, hp, attack, defense, speed, experience, moves, default_hp)
-    
+
     def choose_move(self):
         return self.moves[random.randint(0, len(self.moves) - 1)]
 
@@ -414,7 +414,6 @@ def main():
         if keep_playing == 'no':
             print("Goodbye!")
             return
-        
 
 
 if __name__ == '__main__':
